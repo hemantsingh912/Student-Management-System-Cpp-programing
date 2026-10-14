@@ -1,0 +1,137 @@
+#include<iostream.h>
+#include<conio.h>
+#include<string.h>
+#include "admin.cpp"
+#include<stdio.h>
+
+class mar
+{      int Rollno;
+char phone_no[100],Aadhaar[100];
+      char name[100],Fname[100],mname[100],dob[100],address[100],email[100];
+      char bg[100];
+      char gender[100], category[100],section;
+      int SRno,clas;
+
+public:
+void showMarksheet()
+{
+    mar s;
+    int sr, foundS = 0, foundM = 0;
+    char line[400];
+
+    float marks[5], total, per;
+    int clas, i;
+
+    clrscr();
+    cout<<"Enter SR No: ";
+    cin>>sr;
+
+    /* -------- STUDENT FILE -------- */
+    ifstream fs("student.txt");
+
+    while(fs.getline(line,400))
+    {
+	sscanf(line,
+	"%d|%d|%c|%ld|%[^|]|%[^|]|%[^|]|%[^|]|%[^|]|%[^|]|%[^|]|%[^|]|%[^|]|%[^|]|%[^|]",
+	&s.SRno,&s.clas,&s.section,&s.Rollno,
+	s.name,s.Fname,s.mname,s.dob,s.phone_no,
+	s.Aadhaar,s.gender,s.category,
+	s.email,s.address,s.bg);
+
+	if(s.SRno == sr)
+	{
+	    foundS = 1;
+	    clas = s.clas;
+	    break;
+	}
+    }
+    fs.close();
+
+    if(!foundS)
+    {
+	cout<<"Student Record Not Found!";
+	getch();
+	return;
+    }
+
+    /* -------- MARKSHEET FILE -------- */
+    ifstream fm("marksheet.txt");
+
+    while(fm.getline(line,400))
+    {
+	sscanf(line,"%d|%d|%f|%f|%f|%f|%f|%f|%f",
+	&sr,&clas,
+	&marks[0],&marks[1],&marks[2],&marks[3],&marks[4],
+	&total,&per);
+
+	if(sr == s.SRno)
+	{
+	    foundM = 1;
+	    break;
+	}
+    }
+    fm.close();
+
+    if(!foundM)
+    {
+	cout<<"Marksheet Not Found!";
+	getch();
+	return;
+    }
+
+    /* -------- OUTPUT (SAME TABLE STYLE) -------- */
+    clrscr();
+   /* cout<<"-----------------------------------------------------------------------------------------\n";
+    printf("| %-4s | %-18s | %-18s | %-4s | %-4s | %-4s | %-4s | %-4s | %-5s | %-5s | %-6s |\n",
+	   "SR","NAME","FATHER","S1","S2","S3","S4","S5","TOTAL","PER%","RESULT");
+    cout<<"-----------------------------------------------------------------------------------------\n";
+
+    printf("| %-4d | %-18.18s | %-18.18s | %-4.0f | %-4.0f | %-4.0f | %-4.0f | %-4.0f | %-5.0f | %-5.2f | %-6s |\n",
+	   s.SRno, s.name, s.Fname,
+	   marks[0], marks[1], marks[2], marks[3], marks[4],
+	   total, per,
+	   (per >= 33) ? "PASS" : "FAIL");
+
+    cout<<"-----------------------------------------------------------------------------------------\n";
+   */
+
+	       clrscr();
+	       printf("\n\n\n\n\n\n\n");
+	       printf("                *************************************************\n");
+	       printf("               (<-------------STAR INFOTECH COLLEGE------------->)\n");
+	       printf("                *************************************************\n");
+	       printf("                |       SR No   : %-10d                    |\n", s.SRno);
+	       printf("                |       Name    : %-20s          |\n", s.name);
+	       printf("                |       Father  : %-20s          |\n", s.Fname);
+	       printf("                |       Mother  : %-20s          |\n", s.mname);
+	       printf("               (<---------------Subjects Marks------------------>)\n");
+
+	       for (i = 0; i < 5; i++) {
+	       printf("                |        Subject %d: %.2f                       |\n", i + 1, marks[i]);
+	       total += marks[i];
+	       }
+
+	       per = total / 5;
+	       printf("                |          TOTAL  : %.2f                      |\n", total);
+	       printf("                -------------------------------------------------\n");
+	       printf("                |        Percentage: %.2f%%                     |\n", per);
+	       if (per >= 33)
+	       printf("                |        RESULT :PASS                           |\n");
+	       else
+	       printf("                |        RESULT :FAIL                           |\n");
+	       printf("                -------------------------------------------------\n");
+
+
+
+    getch();
+}
+};
+
+void main()
+{
+clrscr();
+	   mar s;
+	   s.showMarksheet();
+	getch();
+
+}

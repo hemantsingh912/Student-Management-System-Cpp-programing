@@ -1,0 +1,325 @@
+#include<iostream.h>
+#include<conio.h>
+#include<string.h>
+#include<fstream.h>
+#include<dos.h>
+#include<stdio.h> // printf ke liye zaruri hai
+
+class rtc
+{
+ long int Rollno,ssrno,tcno;
+      char phone_no[100],Aadhaar[100];
+      char name[100],Fname[100],mname[100],dob[100],address[100],email[100];
+      char bg[100];
+      char gender[100], category[100],section;
+      int SRno,clas;
+   public:
+int getTCno()
+{
+    ifstream fin("TCnumber.txt");
+    int lastTC = 100;   // starting se pehla TC 101 hoga
+
+    if(fin)
+    {
+        fin >> lastTC;
+        fin.close();
+    }
+
+    int newTC = lastTC + 1;
+
+    ofstream fout("TCnumber.txt");
+    fout << newTC;
+    fout.close();
+
+    return newTC;
+}
+
+   void request()
+   {
+     rtc s;
+    int c, Roll, found=0;
+    char sec;
+    char line[400];
+
+label:
+    clrscr();
+    cout<<"Enter Class: ";
+	cin>>c;
+    if(c<1 || c>12) {
+	 cout<<"Invalid Class";
+
+	 getch();
+	 goto label; }
+
+labels:
+    cout<<"Enter Section: ";
+    cin>>sec;
+
+    if(sec!='A' && sec!='B' && sec!='C')
+     {
+      cout<<"Invalid Section";
+       getch();
+       goto labels;
+     }
+
+    cout<<"Enter Roll No: ";
+     cin>>Roll;
+
+    ifstream fin("student.txt");
+    clrscr();
+    cout<<"----- Student Search Result -----\n\n";
+
+    while(fin.getline(line,400))
+    {
+	sscanf(line, "%d|%d|%c|%ld|%[^|]|%[^|]|%[^|]|%[^|]|%[^|]|%[^|]|%[^|]|%[^|]|%[^|]|%[^|]|%[^|]",
+	       &s.SRno,&s.clas,&s.section,&s.Rollno,
+	       s.name,s.Fname,s.mname,s.dob,s.phone_no,
+	       s.Aadhaar,s.gender,s.category,
+	       s.email,s.address,s.bg);
+
+	if(s.clas==c && s.section==sec && s.Rollno==Roll)
+	{
+	    found=1;
+		  ssrno=s.SRno;                //TCNo
+		cout<<"SR No      : "<<s.SRno<<endl;
+	    cout<<"Roll No    : "<<s.Rollno<<endl;
+	    cout<<"Name       : "<<s.name<<endl;
+	    cout<<"Father     : "<<s.Fname<<endl;
+	    cout<<"Mother     : "<<s.mname<<endl;
+	    cout<<"DOB        : "<<s.dob<<endl;
+	    cout<<"Phone      : "<<s.phone_no<<endl;
+	    cout<<"Aadhaar    : "<<s.Aadhaar<<endl;
+	    cout<<"Gender     : "<<s.gender<<endl;
+	    cout<<"Category   : "<<s.category<<endl;
+	    cout<<"Email      : "<<s.email<<endl;
+	    cout<<"Address    : "<<s.address<<endl;
+	    cout<<"Blood Group: "<<s.bg<<endl;
+	    cout<<"-----------------------------\n";
+	    break;
+	}
+    }
+    if(!found)
+    {
+     cout<<"No Record Found";
+     return;
+    }
+    fin.close();
+    char l[100];
+	cout<<"\n\n\nNOTE:- tum isko TC dana chahta ho kya YES/NO";
+	cin>>l;
+
+	if(strcmp(l,"YES")==0 || strcmp(l,"yes")==0)
+	{
+		 addRequest(ssrno);
+		 delete_studentData(ssrno);
+	}
+
+   }
+ void addRequest(int x)
+ {
+   cout<<endl<<x;
+    rtc s;
+    int found=0;
+   char line[400];
+    s.tcno=getTCno();
+       ifstream fin("student.txt");
+       ofstream fout("tcrequest.txt",ios::app);
+
+	if(!fin || !fout)
+	{
+	   cout<<"File error";
+	   getch();
+	   return;
+	}
+    clrscr();
+
+    while(fin.getline(line,400))
+    {
+	sscanf(line, "%d|%d|%c|%ld|%[^|]|%[^|]|%[^|]|%[^|]|%[^|]|%[^|]|%[^|]|%[^|]|%[^|]|%[^|]|%[^|]",
+	       &s.SRno,&s.clas,&s.section,&s.Rollno,
+	       s.name,s.Fname,s.mname,s.dob,s.phone_no,
+	       s.Aadhaar,s.gender,s.category,
+	       s.email,s.address,s.bg);
+
+	if(s.SRno==x)
+	{
+	    found=1;
+	     fout <<s.tcno  <<"|"
+		  << s.SRno << "|"
+		  << s.clas << "|"
+		  << s.section << "|"
+		  << s.Rollno << "|"
+		  << s.name << "|"
+		  << s.Fname << "|"
+		  << s.mname << "|"
+		  << s.dob << "|"
+		  << s.phone_no << "|"
+		  << s.Aadhaar << "|"
+		  << s.gender << "|"
+		  << s.category << "|"
+		  << s.email << "|"
+		  << s.address << "|"
+		  << s.bg << "\n";
+		  break;
+	   }
+     }
+     fin.close();
+     fout.close();
+     if(found)
+     {
+     cout<<"\n TC Request Added SuccessFully!";
+     }
+     else
+     {
+       cout<<"\n Student Not Found !";
+     }
+   getch();
+ }
+			//Student Data Delete
+
+void delete_studentData(int x)
+{
+    rtc s;
+    int c, Roll, found=0;
+    char sec, line[400];
+
+    clrscr();
+    ifstream fin("student.txt");
+    ofstream fout("temp.txt");
+
+    while(fin.getline(line,400))
+    {
+	sscanf(line, "%d|%d|%c|%ld|%[^|]|%[^|]|%[^|]|%[^|]|%[^|]|%[^|]|%[^|]|%[^|]|%[^|]|%[^|]|%[^|]",
+	       &s.SRno,&s.clas,&s.section,&s.Rollno,
+	       s.name,s.Fname,s.mname,s.dob,s.phone_no,
+	       s.Aadhaar,s.gender,s.category,
+	       s.email,s.address,s.bg);
+
+	if(s.SRno==x)
+	 found=1;
+	else
+	 fout<<line<<"\n";
+    }
+    fin.close(); fout.close();
+    remove("student.txt");
+    rename("temp.txt","student.txt");
+
+    if(found) cout<<"\nStudent Record Deleted!";
+    else cout<<"\nRecord Not Found!";
+    getch();
+}
+
+void viewTC()
+{
+    rtc t;
+    char line[400];
+    int found = 0;
+       int ptc;
+       cout<<"Enter a TCNO: ";
+       cin>>ptc;
+    ifstream fin("tcview.txt");
+
+    if(!fin)
+    {
+	cout<<"File not found!";
+	getch();
+	return;
+    }
+    clrscr();
+
+	cout<<"----------- TRANSFER CERTIFICATE -----------\n\n";
+
+    while(fin.getline(line, 400))
+    {
+	sscanf(line,
+	"%ld|%d|%d|%c|%ld|%[^|]|%[^|]|%[^|]|%[^|]|%[^|]|%[^|]|%[^|]|%[^|]|%[^|]|%[^|]|%[^|]",
+	&t.tcno,
+	&t.SRno,
+	&t.clas,
+	&t.section,
+	&t.Rollno,
+	t.name,
+	t.Fname,
+	t.mname,
+	t.dob,
+	t.phone_no,
+	t.Aadhaar,
+	t.gender,
+	t.category,
+	t.email,
+	t.address,
+	t.bg
+	);
+	    if(t.tcno==ptc)
+	    {
+	found = 1;
+	    cout<<"TC No        : "<<t.tcno<<endl;
+	    cout<<"SR No        : "<<t.SRno<<endl;
+	    cout<<"Roll No      : "<<t.Rollno<<endl;
+	    cout<<"Name         : "<<t.name<<endl;
+	    cout<<"Father Name  : "<<t.Fname<<endl;
+	    cout<<"Mother Name  : "<<t.mname<<endl;
+	    cout<<"Class        : "<<t.clas<<endl;
+	    cout<<"Section      : "<<t.section<<endl;
+	    cout<<"DOB          : "<<t.dob<<endl;
+	    cout<<"Phone        : "<<t.phone_no<<endl;
+	    cout<<"Aadhaar      : "<<t.Aadhaar<<endl;
+	    cout<<"Gender       : "<<t.gender<<endl;
+	    cout<<"Category     : "<<t.category<<endl;
+	    cout<<"Email        : "<<t.email<<endl;
+	    cout<<"Address      : "<<t.address<<endl;
+	    cout<<"Blood Group  : "<<t.bg<<endl;
+	       cout<<"\n-------------------------------------------\n";
+
+	  break;
+	    }
+    }
+
+   // cout << "-------------------------------------------------------------------------------\n";
+
+    if(!found)
+    {
+	cout<<"No Record Found";
+    }
+
+    fin.close();
+    getch();
+}
+
+};
+void usertc()
+{
+	rtc k;
+	while(1)
+	{
+	    int h;
+	    clrscr();
+cout<<"\t===============================================================\n";
+cout<<"\t           TRANSFER CERTIFICATE MANAGEMENT\n";
+cout<<"\t===============================================================\n\n";
+
+	    cout<<"\t\t1. Request TC\n";
+	    cout<<"\t\t2. View TC\n";
+	    cout<<"\t\t3. Back\n\n";
+	    cout<<"\t\t  Select an Action:- ";
+	    cin>>h;
+			  if(h==3)
+			      return;
+			  switch(h)
+			 {
+			     case 1:
+			     k.request();
+			     break;
+			     case 2:
+			     k.viewTC();
+			     break;
+			     default:
+			     cout<<"INVALID VALUE";
+			     break;
+			 }
+
+
+	}
+
+getch();
+}

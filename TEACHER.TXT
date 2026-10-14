@@ -1,0 +1,3 @@
+10001|Rajesh sahu|C|1234567899|BCA|Karan|12345
+10002|hemant singh|java|1234567891|BCA|hemant|0912
+10002|hemant|cpp|1234567891|BCA|hemt|123

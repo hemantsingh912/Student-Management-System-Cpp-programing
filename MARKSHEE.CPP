@@ -1,0 +1,374 @@
+#include<iostream.h>
+#include<conio.h>
+#include<string.h>
+#include<fstream.h>
+#include<dos.h>
+#include<stdio.h> // printf ke liye zaruri hai
+
+class marksheet
+{
+   int Rollno;
+char phone_no[100],Aadhaar[100];
+      char name[100],Fname[100],mname[100],dob[100],address[100],email[100];
+      char bg[100];
+      char gender[100], category[100],section;
+      int SRno,clas;
+
+    public:
+int checkSRNO(int sr)
+{
+    ifstream fin("student.txt");
+    if(!fin)
+	return 0;
+
+    char line[400];
+    int SRno, clas, Rollno;
+    char section;
+    char name[100], Fname[100], mname[100], dob[100], phone_no[100];
+    char Aadhaar[100], gender[100], category[100], email[100], address[100], bg[100];
+
+    while(fin.getline(line,400))
+    {
+	sscanf(line,
+	"%d|%d|%c|%d|%[^|]|%[^|]|%[^|]|%[^|]|%[^|]|%[^|]|%[^|]|%[^|]|%[^|]|%[^|]|%[^|]",
+	&SRno,&clas,&section,&Rollno,
+	name,Fname,mname,dob,phone_no,
+	Aadhaar,gender,category,
+	email,address,bg);
+
+	if(sr == SRno)
+	{
+	    fin.close();
+	    return 1;   // SRNO found
+	}
+    }
+    fin.close();
+    return 0;   // SRNO not found
+}
+
+int getClass(int sr)
+{
+    ifstream fin("student.txt");
+    if(!fin)
+	return -1;
+
+    char line[400];
+    int SRno, clas, Rollno;
+    char section;
+    char name[100], Fname[100], mname[100], dob[100], phone_no[100];
+    char Aadhaar[100], gender[100], category[100], email[100], address[100], bg[100];
+
+    while(fin.getline(line,400))
+    {
+	sscanf(line,
+	"%d|%d|%c|%d|%[^|]|%[^|]|%[^|]|%[^|]|%[^|]|%[^|]|%[^|]|%[^|]|%[^|]|%[^|]|%[^|]",
+	&SRno,&clas,&section,&Rollno,
+	name,Fname,mname,dob,phone_no,
+	Aadhaar,gender,category,
+	email,address,bg);
+
+	if(sr == SRno)
+	{
+	    fin.close();
+	    return clas;
+	}
+    }
+    fin.close();
+    return -1;
+}
+void Add_Marksheet()
+{
+    int sr;
+    cout<<"Enter SRNO: ";
+    cin>>sr;
+
+    int clas = getClass(sr);
+
+    if(clas == -1)
+    {
+	cout<<"Invalid SRNO!";
+	getch();
+	return;
+    }
+
+    cout<<"Class Found: "<<clas<<endl;
+
+    int marks[6], total=0;
+    float per;
+
+    for(int i=0;i<5;i++)
+    {     d:
+	cout<<"Enter marks of subject "<<i+1<<": ";
+	cin>>marks[i];
+	if(marks[i]>100 ||marks[i]<0)
+	{
+	cout<<"Invalid number";
+	goto d;
+	}
+	total += marks[i];
+    }
+
+    per = total / 6.0;
+
+    ofstream fout("marksheet.txt", ios::app);
+    fout<<sr<<"|"<<clas;
+
+    for(int j=0;j<5;j++)
+	fout<<"|"<<marks[j];
+
+    fout<<"|"<<total<<"|"<<per<<endl;
+    fout.close();
+
+    cout<<"Marksheet Added Successfully!";
+    getch();
+}
+void showMarksheet()
+{
+    marksheet s;
+    int sr, foundS = 0, foundM = 0;
+    char line[400];
+
+    float marks[5], total, per;
+    int clas, i;
+
+    clrscr();
+    cout<<"Enter SR No: ";
+    cin>>sr;
+
+    /* -------- STUDENT FILE -------- */
+    ifstream fs("student.txt");
+
+    while(fs.getline(line,400))
+    {
+	sscanf(line,
+	"%d|%d|%c|%ld|%[^|]|%[^|]|%[^|]|%[^|]|%[^|]|%[^|]|%[^|]|%[^|]|%[^|]|%[^|]|%[^|]",
+	&s.SRno,&s.clas,&s.section,&s.Rollno,
+	s.name,s.Fname,s.mname,s.dob,s.phone_no,
+	s.Aadhaar,s.gender,s.category,
+	s.email,s.address,s.bg);
+
+	if(s.SRno == sr)
+	{
+	    foundS = 1;
+	    clas = s.clas;
+	    break;
+	}
+    }
+    fs.close();
+
+    if(!foundS)
+    {
+	cout<<"Student Record Not Found!";
+	getch();
+	return;
+    }
+
+    /* -------- MARKSHEET FILE -------- */
+    ifstream fm("marksheet.txt");
+
+    while(fm.getline(line,400))
+    {
+	sscanf(line,"%d|%d|%f|%f|%f|%f|%f|%f|%f",
+	&sr,&clas,
+	&marks[0],&marks[1],&marks[2],&marks[3],&marks[4],
+	&total,&per);
+
+	if(sr == s.SRno)
+	{
+	    foundM = 1;
+	    break;
+	}
+    }
+    fm.close();
+
+    if(!foundM)
+    {
+	cout<<"Marksheet Not Found!";
+	getch();
+	return;
+    }
+
+
+    clrscr();
+	       total=0;
+
+	       clrscr();
+	       printf("\n\n\n\n\n\n\n");
+	       printf("                *************************************************\n");
+	       printf("               (<-------------STAR INFOTECH COLLEGE------------->)\n");
+	       printf("                *************************************************\n");
+	       printf("                |       SR No   : %-10d                    |\n", s.SRno);
+	       printf("                |       Name    : %-20s          |\n", s.name);
+	       printf("                |       Father  : %-20s          |\n", s.Fname);
+	       printf("                |       Mother  : %-20s          |\n", s.mname);
+	       printf("               (<---------------Subjects Marks------------------>)\n");
+
+	       for (i = 0; i < 5; i++) {
+	       printf("                |        Subject %d: %.2f                       |\n", i + 1, marks[i]);
+	       total += marks[i];
+	       }
+
+	       per = total / 5;
+	       printf("                |          TOTAL  : %.2f                      |\n", total);
+	       printf("                -------------------------------------------------\n");
+	       printf("                |        Percentage: %.2f%%                     |\n", per);
+	       if (per >= 33)
+	       printf("                |        RESULT :PASS                           |\n");
+	       else
+	       printf("                |        RESULT :FAIL                           |\n");
+	       printf("                -------------------------------------------------\n");
+
+
+
+    getch();
+}
+
+
+void Delete_Marksheet()
+{
+    ifstream fin("marksheet.txt");
+    ofstream fout("temp.txt");
+
+    int sr, file_sr;
+    int found = 0;
+    char line[300];
+
+    clrscr();
+    cout << "Enter SR No to Delete Marksheet: ";
+    cin >> sr;
+
+    while(fin.getline(line, 300))
+    {
+	sscanf(line, "%d|", &file_sr);
+
+	if(file_sr != sr)
+	{
+	    fout << line << endl;
+	}
+	else
+	{
+	    found = 1;
+	}
+    }
+
+    fin.close();
+    fout.close();
+
+    remove("marksheet.txt");
+    rename("temp.txt", "marksheet.txt");
+
+    if(found)
+	cout << "\nMarksheet Deleted Successfully!";
+    else
+	cout << "\nMarksheet Not Found!";
+
+    getch();
+}
+void Update_Marksheet()
+{
+    ifstream fin("marksheet.txt");
+    ofstream fout("temp.txt");
+
+    int sr, file_sr;
+    int m1, m2, m3, m4, m5, total;
+    float per;
+    int found = 0;
+    char line[300];
+
+    clrscr();
+    cout << "Enter SR No to Update Marksheet: ";
+    cin >> sr;
+
+    while(fin.getline(line, 300))
+    {
+	sscanf(line, "%d|", &file_sr);
+
+	if(file_sr == sr)
+	{
+	    cout << "\nEnter 1 Subject Marks:- ";
+	    cin >> m1;
+	    cout << "\nEnter 2 Subject Marks:- ";
+	    cin >> m2;
+	    cout << "\nEnter 3 Subject Marks:- ";
+	    cin >> m3;
+	    cout << "\nEnter 4 Subject Marks:- ";
+	    cin >> m4;
+	    cout << "\nEnter 5 Subject Marks:- ";
+	    cin >> m5;
+
+            total = m1 + m2 + m3 + m4 + m5;
+            per = total / 5.0;
+
+            fout << sr << "|"
+                 << m1 << "|" << m2 << "|" << m3 << "|"
+                 << m4 << "|" << m5 << "|"
+                 << total << "|" << per << endl;
+
+            found = 1;
+        }
+        else
+        {
+            fout << line << endl;
+        }
+    }
+
+    fin.close();
+    fout.close();
+
+    remove("marksheet.txt");
+    rename("temp.txt", "marksheet.txt");
+
+    if(found)
+        cout << "\nMarksheet Updated Successfully!";
+    else
+        cout << "\nMarksheet Not Found!";
+
+    getch();
+}
+
+
+};
+
+
+
+void marks()
+{
+marksheet k;
+	while(1){
+      int j;
+		clrscr();
+		clrscr();
+cout<<"\t===============================================================\n";
+cout<<"\t<-----------------STUDENT ACADEMIC MARKSHEET------------------>\n";
+cout<<"\t===============================================================\n\n\n\n";
+
+		cout<<"\t\t1. Add Marksheet Data\n";
+		cout<<"\t\t2. Show Marksheet Data\n";
+		cout<<"\t\t3. Update Marksheet Data\n";
+		cout<<"\t\t4. Delete Marksheet Data\n";
+		cout<<"\t\t5. Back\n\n";
+		cout<<"\t\tSelect an Action:- ";
+		cin>>j;
+		if(j==5)
+		   return;
+
+		switch(j)
+		{
+		    case 1:
+			   k.Add_Marksheet();
+		     break;
+		    case 2:
+			   k.showMarksheet();
+		     break;
+		    case 3:
+			   k.Update_Marksheet();
+		     break;
+		    case 4:
+			   k.Delete_Marksheet();
+		     break;
+		    default: cout<<"Invalid Value"; break;
+		}
+
+      }
+getch();
+}
